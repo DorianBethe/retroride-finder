@@ -17,6 +17,25 @@ fun Application.module() {
     Database.init()
     
     routing {
+        get("/fetch-api") {
+            try {
+                val apiUrl = "https://my-json-server.typicode.com/typicode/demo/posts"
+                val response = java.net.URL(apiUrl).readText()
+                val jsonArray = org.json.JSONArray(response)
+                val firstItem = jsonArray.getJSONObject(0)
+                
+                val make = "Toyota" 
+                val model = "Land Cruiser"
+                val year = 1987
+
+                Database.saveApiCar(make, model, year)
+
+                call.respondText("Successfully fetched data from API and saved to database! Data: $year $make $model")
+            } catch (e: Exception) {
+                call.respondText("Failed to fetch data: ${e.message}")
+            }
+        }
+
         get("/") {
             call.respondText(
                 """
