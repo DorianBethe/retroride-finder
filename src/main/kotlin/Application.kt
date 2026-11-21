@@ -19,15 +19,20 @@ fun Application.module() {
     routing {
         get("/fetch-api") {
             try {
-                val apiUrl = "https://my-json-server.typicode.com/typicode/demo/posts"
+                // Using a reliable government API for car makes
+                val apiUrl = "https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=json"
                 val response = java.net.URL(apiUrl).readText()
-                val jsonArray = org.json.JSONArray(response)
-                val firstItem = jsonArray.getJSONObject(0)
                 
-                val make = "Toyota" 
-                val model = "Land Cruiser"
-                val year = 1987
+                // Parse the JSON response
+                val jsonObject = org.json.JSONObject(response)
+                val resultsArray = jsonObject.getJSONArray("Results")
+                val firstCar = resultsArray.getJSONObject(0)
+                
+                val make = firstCar.getString("Make_Name")
+                val model = "Unknown"
+                val year = 2024
 
+                // Save to database
                 Database.saveApiCar(make, model, year)
 
                 call.respondText("Successfully fetched data from API and saved to database! Data: $year $make $model")
