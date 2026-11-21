@@ -44,4 +44,57 @@ object Database {
             println("Failed to log query: ${e.message}")
         }
     }
+    fun saveApiCar(make: String, model: String, year: Int) {
+        try {
+            dataSource.connection.use { conn ->
+                // First, make sure the table exists
+                conn.createStatement().execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS api_cars (
+                        id SERIAL PRIMARY KEY,
+                        make TEXT NOT NULL,
+                        model TEXT NOT NULL,
+                        year INT NOT NULL
+                    );
+                    """.trimIndent()
+                )
+                
+                // Then insert the data
+                conn.prepareStatement("INSERT INTO api_cars (make, model, year) VALUES (?, ?, ?)").use { stmt ->
+                    stmt.setString(1, make)
+                    stmt.setString(2, model)
+                    stmt.setInt(3, year)
+                    stmt.executeUpdate()
+                }
+            }
+            println("API car saved to database: $year $make $model")
+        } catch (e: Exception) {
+            println("Failed to save API data: ${e.message}")
+        }
+    }
+    fun saveApiCar(make: String, model: String, year: Int) {
+        try {
+            dataSource.connection.use { conn ->
+                conn.createStatement().execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS api_cars (
+                        id SERIAL PRIMARY KEY,
+                        make TEXT NOT NULL,
+                        model TEXT NOT NULL,
+                        year INT NOT NULL
+                    );
+                    """.trimIndent()
+                )
+                conn.prepareStatement("INSERT INTO api_cars (make, model, year) VALUES (?, ?, ?)").use { stmt ->
+                    stmt.setString(1, make)
+                    stmt.setString(2, model)
+                    stmt.setInt(3, year)
+                    stmt.executeUpdate()
+                }
+            }
+            println("API car saved to database: $year $make $model")
+        } catch (e: Exception) {
+            println("Failed to save API data: ${e.message}")
+        }
+    }
 }
